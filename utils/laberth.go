@@ -10,7 +10,7 @@ import (
 )
 
 const (
-	WINDOW_DIMENTION_X, WINDOW_DIMENTION_Y, SIZE_BLOCK int     = 700, 700, 20 // window dimention AND large: 100. medium: 50, little: 20, nano: 10
+	WINDOW_DIMENTION_X, WINDOW_DIMENTION_Y, SIZE_BLOCK int     = 700, 700, 50 // window dimention AND large: 100. medium: 50, little: 20, nano: 10
 	FIELD_DIMENTION_X, FIELD_DIMENTION_Y               int     = ((WINDOW_DIMENTION_X / SIZE_BLOCK) * 2) + 1, ((WINDOW_DIMENTION_Y / SIZE_BLOCK) * 2) + 1
 	SIZE_FIELD                                         int     = SIZE_BLOCK / 2
 	MOVEMENT_DISTANCE                                  float32 = float32(SIZE_FIELD)
@@ -45,7 +45,7 @@ func GetNewEmptyMap() models.Labyrinth {
 	return laberth
 }
 
-func SetObjectsInLaberth(laberth *models.Labyrinth) (models.Coords, models.Coords) {
+func CreateNewObjectsInLaberth(laberth *models.Labyrinth) (models.Coords, models.Coords) {
 
 	player, target := SetObjectPositions(laberth)
 	return player, target
@@ -58,7 +58,7 @@ func BuildLaberthWall(newEmptyMap *models.Labyrinth) *models.Labyrinth {
 
 func MovementThread(win *pixelgl.Window, imd *imdraw.IMDraw, target *models.Coords, laberth *models.Labyrinth) {
 	for {
-		time.Sleep(80 * time.Millisecond)
+		time.Sleep(10 * time.Millisecond)
 		win.Update()
 		CheckTargetPosition(win, imd, laberth, target)
 	}

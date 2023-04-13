@@ -6,40 +6,42 @@ import (
 	"time"
 )
 
-func generateRandInt(randLimit int) int {
-	s1 := rand.NewSource(time.Now().UnixNano())
-	r1 := rand.New(s1)
+var (
+	randomizer *rand.Rand
+)
 
-	return r1.Intn(randLimit)
+func GenerateValidMapPoint(laberth *models.Labyrinth) (mapPoint models.Coords) {
+
+	for {
+		mapPoint = generateRandMapPoint(laberth.ArrayToMap)
+		if checkMapPointIsAvailable(mapPoint, laberth) {
+			break
+		}
+	}
+
+	return
 }
 
-func generateRandMapPoint(randX, randY int) models.Coords {
+func checkMapPointIsAvailable(mapPoint models.Coords, laberth *models.Labyrinth) bool {
+	switch mapPointable := laberth.ArrayToMap[mapPoint.XPoint][mapPoint.YPoint].(type) {
+	case models.MapBool:
+		if mapPointable {
+			return false
+		}
+	case models.MapPointable:
+	default:
+		return false
+	}
+	return true
+}
+
+func generateRandMapPoint(arrayMap [][]models.MapPointable) models.Coords {
+	randX := len(arrayMap) - 2
+	randY := len(arrayMap[0]) - 2
 	return models.Coords{
 		XPoint: generateRandInt(randX),
 		YPoint: generateRandInt(randY),
 	}
-}
-
-func GenerateValidMapPoint(laberth *models.Labyrinth) (mapPoint models.Coords) {
-
-	randX := len(laberth.ArrayToMap) - 2
-	randY := len(laberth.ArrayToMap[0]) - 2
-
-	for {
-		mapPoint = generateRandMapPoint(randX, randY)
-		switch mapPointable := laberth.ArrayToMap[mapPoint.XPoint][mapPoint.YPoint].(type) {
-		case models.MapBool:
-			if mapPointable {
-				continue
-			}
-		case models.MapPointable:
-		default:
-			continue
-		}
-		break
-	}
-
-	return
 }
 
 func getNewTarget(mapPoint models.Coords, newTarget models.Target) models.MapPointable {
@@ -62,20 +64,27 @@ func getNewTarget(mapPoint models.Coords, newTarget models.Target) models.MapPoi
 func SetObjectPositions(laberth *models.Labyrinth) (player, target models.Coords) {
 
 	player = GenerateValidMapPoint(laberth)
-	target = GenerateValidMapPoint(laberth)
+
 	var mapPoint models.Coords
+	var newTarget models.Target
 
 	for i := 0; i < 10; i++ {
 		mapPoint = GenerateValidMapPoint(laberth)
-		switch generateRandInt(2) {
-		case 0:
-			laberth.ArrayToMap[mapPoint.XPoint][mapPoint.YPoint] = getNewTarget(mapPoint, models.Enemy{})
-		case 1:
-			laberth.ArrayToMap[mapPoint.XPoint][mapPoint.YPoint] = getNewTarget(mapPoint, models.Coin{})
+
+		if generateRandBool() {
+			newTarget = models.Coin{}
+		} else {
+			newTarget = models.Enemy{}
 		}
+
+		laberth.ArrayToMap[mapPoint.XPoint][mapPoint.YPoint] = getNewTarget(mapPoint, newTarget)
 	}
 
 	return
+}
+
+func createNewEnemy() {
+
 }
 
 // Create new Labyrinth by setting point and walls in empty map
@@ -90,17 +99,14 @@ func CreateNewLabyrinth(emptyMap *models.Labyrinth) {
 func iterateIntoEmptyMap(emptyMap *models.Labyrinth) {
 	// Getting map dimesions to iterate
 	fieldDimentionX, fieldDimentionY := GetMapDimensions(emptyMap)
-	// Getting new randomizer to generate walls
-	randomizer := getRandomizer()
+	// Randomizer
+	randomizer = getRandomizer()
+
 	for i := 0; i < fieldDimentionX; i++ {
 		for j := 0; j < fieldDimentionY; j++ {
-			emptyMap.ArrayToMap[i][j] = getRandomBool(randomizer, i, j)
+			emptyMap.ArrayToMap[i][j] = getRandomMapBool(i, j)
 		}
 	}
-}
-
-func getRandomBool(randomizer *rand.Rand, i, j int) models.MapBool {
-	return !((i%2 == 0 && j%2 == 0) || randomizer.Intn(2) == 0)
 }
 
 func createEmptyMapToCheck(emptyMap *models.Labyrinth) {
@@ -114,10 +120,21 @@ func createEmptyMapToCheck(emptyMap *models.Labyrinth) {
 	}
 }
 
-func getRandomizer() (randomizer *rand.Rand) {
+func getRandomMapBool(XPoint, YPoint int) models.MapBool {
+	return (models.MapBool)(generateRandBool() && (XPoint%2 == 0 || YPoint%2 == 0))
+}
+
+func generateRandBool() bool {
+	return generateRandInt(2) == 1
+}
+
+func generateRandInt(limit int) int {
+	return randomizer.Intn(limit)
+}
+
+func getRandomizer() *rand.Rand {
 	timeFactor := rand.NewSource(time.Now().UnixNano())
-	randomizer = rand.New(timeFactor)
-	return
+	return rand.New(timeFactor)
 }
 
 // Get dimension of a map

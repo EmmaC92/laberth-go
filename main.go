@@ -30,15 +30,32 @@ func run() {
 	log.Println("Running movement thread.. ")
 	go utils.MovementThread(win, targetImd, &target, &emptyMap)
 
+	// building walls
+	log.Println("Building walls..")
+	laberth := utils.BuildLaberthWall(&emptyMap)
+
+	// setting players and targets
+	log.Println("Setting players and targets..")
+	player, target = utils.CreateNewObjectsInLaberth(laberth)
+
+	// Wash and print maps
+	log.Println("Preparing maps..", player)
+	win.Clear(colornames.Black)
+	imd.Clear()
+
+	// Printing walls
+	log.Println("Printing walls and objects")
+	utils.RenderMapAndObjects(laberth, imd)
+	imd.Draw(win)
+	
+	// // Validating maps
+	// log.Println("Validating laberyn..")
+	// utils.ValidateMap("", player, &target, laberth, imd, win, utils.SIZE_FIELD)
+
 	// starting infinite for loop to draw the maps and object  
 	log.Println("Starting infinite loop to draw.. ")
 	for {
-		laberth := utils.BuildLaberthWall(&emptyMap)
-		player, target = utils.SetObjectsInLaberth(laberth)
-		win.Clear(colornames.Black)
-		imd.Clear()
-		utils.RenderMapAndObjects(laberth, imd)
-		utils.ValidateMap("", player, &target, laberth, imd, win, utils.SIZE_FIELD)
+
 	}
 }
 

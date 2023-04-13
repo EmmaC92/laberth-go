@@ -79,7 +79,6 @@ func CheckMapByBFS(player models.Coords, target *models.Coords, laberth *models.
 	mutex := &sync.Mutex{}
 	var slice []models.Coords
 	var laberthOver bool = false
-	time.Sleep(2500 * time.Millisecond)
 
 	for {
 		getCoordsSlice(player, &slice, laberth)
