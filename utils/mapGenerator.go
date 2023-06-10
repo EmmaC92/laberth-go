@@ -44,26 +44,16 @@ func generateRandMapPoint(arrayMap [][]models.MapPointable) models.Coords {
 	}
 }
 
-func getNewTarget(mapPoint models.Coords, newTarget models.Target) models.MapPointable {
-	var score int
-
-	switch newTarget.(type) {
-	case models.Enemy:
-		score = 20
-	case models.Coin:
-	default:
-		score = 10
-	}
-
-	return models.MapPoint{
-		TargetInPoint: newTarget.SetScore(score).SetMapPoint(mapPoint),
-	}
-}
-
 // SetObjectPositions func
 func SetObjectPositions(laberth *models.Labyrinth) (player, target models.Coords) {
 
 	player = GenerateValidMapPoint(laberth)
+	target = GenerateValidMapPoint(laberth)
+
+	return
+}
+
+func SetTargetPositionsInLabyrinth(laberth *models.Labyrinth) {
 
 	var mapPoint models.Coords
 	var newTarget models.Target
@@ -79,8 +69,22 @@ func SetObjectPositions(laberth *models.Labyrinth) (player, target models.Coords
 
 		laberth.ArrayToMap[mapPoint.XPoint][mapPoint.YPoint] = getNewTarget(mapPoint, newTarget)
 	}
+}
 
-	return
+func getNewTarget(mapPoint models.Coords, newTarget models.Target) models.MapPointable {
+	var score int
+
+	switch newTarget.(type) {
+	case models.Enemy:
+		score = 20
+	case models.Coin:
+	default:
+		score = 10
+	}
+
+	return models.MapPoint{
+		TargetInPoint: newTarget.SetScore(score).SetMapPoint(mapPoint),
+	}
 }
 
 // Create new Labyrinth by setting point and walls in empty map

@@ -13,7 +13,7 @@ import (
 func run() {
 	// initializing objects
 	player := models.Coords{}
-	target := models.Coords{}
+	snake  := models.Coords{}
 
 	// getting configurations for windows
 	log.Println("Getting configurations.. ")
@@ -34,12 +34,15 @@ func run() {
 	log.Println("Building walls..")
 	laberth := utils.BuildLaberthWall(&emptyMap)
 
-	// setting players and targets
+	// setting player and snake
 	log.Println("Setting players and targets..")
-	player, target = utils.CreateNewObjectsInLaberth(laberth)
+	player, snake = utils.CreateNewObjectsInLaberth(laberth)
+
+	// setting targets
+	utils.SetTargetPositionsInLabyrinth(laberth)
 
 	// Wash and print maps
-	log.Println("Preparing maps..", player)
+	log.Println("Preparing maps..", player, snake)
 	win.Clear(colornames.Black)
 	imd.Clear()
 
@@ -50,13 +53,13 @@ func run() {
 	
 	// // Validating maps
 	// log.Println("Validating laberyn..")
-	// utils.ValidateMap("", player, &target, laberth, imd, win, utils.SIZE_FIELD)
+	utils.ValidateMap("", player, &snake, laberth, imd, win, utils.SIZE_FIELD)
 
 	// starting infinite for loop to draw the maps and object  
 	log.Println("Starting infinite loop to draw.. ")
-	for {
+	// for {
 
-	}
+	// }
 }
 
 func main() {

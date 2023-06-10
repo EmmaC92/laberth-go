@@ -2,11 +2,13 @@ package searchingAlgorithms
 
 import (
 	"camuschino/laberth-go/models"
+	"camuschino/laberth-go/utils"
 	"sync"
 	"time"
 
 	"github.com/faiface/pixel/imdraw"
 	"github.com/faiface/pixel/pixelgl"
+	"golang.org/x/image/colornames"
 )
 
 var (
@@ -31,7 +33,7 @@ func forBFS(slice []models.Coords, target *models.Coords, mutex *sync.Mutex, lab
 		laberth.ArrayToCheck[first.XPoint][first.YPoint] = true
 
 		if *target == first {
-			// utils.RenderingStep(first, laberth, colornames.Blue, mutex, imd, win)
+			utils.RenderingStep(first, laberth, colornames.Blue, mutex, imd, win)
 			time.Sleep(1000 * time.Millisecond)
 			laberth.Over <- true
 		}
@@ -42,7 +44,7 @@ func forBFS(slice []models.Coords, target *models.Coords, mutex *sync.Mutex, lab
 			println(score)
 		}
 
-		// utils.RenderingStep(first, laberth, colornames.Greenyellow, mutex, imd, win)
+		utils.RenderingStep(first, laberth, colornames.Greenyellow, mutex, imd, win)
 
 		getCoordsSlice(first, &slice, laberth)
 	}
@@ -95,8 +97,8 @@ func CheckMapByBFS(player models.Coords, target *models.Coords, laberth *models.
 			break
 		}
 
-		time.Sleep(2500 * time.Millisecond)
-		// player = utils.GenerateValidMapPoint(laberth)
+		time.Sleep(25000 * time.Millisecond)
+		player = utils.GenerateValidMapPoint(laberth)
 	}
 }
 
