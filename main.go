@@ -28,7 +28,7 @@ func run() {
 
 	// run main go routine to check movements from user
 	log.Println("Running movement thread.. ")
-	go utils.MovementThread(win, targetImd, &target, &emptyMap)
+	go utils.MovementThread(win, targetImd, &snake, &emptyMap)
 
 	// building walls
 	log.Println("Building walls..")
