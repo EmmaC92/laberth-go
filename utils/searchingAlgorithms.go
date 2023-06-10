@@ -113,6 +113,9 @@ func forBFS(slice []models.Coords, target *models.Coords, mutex *sync.Mutex, lab
 			println(score)
 		}
 
+		// BFS searching velocity
+		time.Sleep(100 * time.Millisecond)
+
 		RenderingStep(first, laberth, colornames.Greenyellow, mutex, imd, win)
 
 		getCoordsSlice(first, &slice, laberth)

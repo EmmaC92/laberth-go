@@ -35,14 +35,15 @@ func run() {
 	laberth := utils.BuildLaberthWall(&emptyMap)
 
 	// setting player and snake
-	log.Println("Setting players and targets..")
+	log.Println("Setting players and snake..")
 	player, snake = utils.CreateNewObjectsInLaberth(laberth)
 
 	// setting targets
+	log.Println("Setting targets..")	
 	utils.SetTargetPositionsInLabyrinth(laberth)
 
 	// Wash and print maps
-	log.Println("Preparing maps..", player, snake)
+	log.Println("Preparing maps..")
 	win.Clear(colornames.Black)
 	imd.Clear()
 
@@ -52,7 +53,7 @@ func run() {
 	imd.Draw(win)
 	
 	// // Validating maps
-	// log.Println("Validating laberyn..")
+	log.Println("Validating laberyn..")
 	utils.ValidateMap("", player, &snake, laberth, imd, win, utils.SIZE_FIELD)
 
 	// starting infinite for loop to draw the maps and object  
