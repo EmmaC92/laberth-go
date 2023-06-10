@@ -83,10 +83,6 @@ func SetObjectPositions(laberth *models.Labyrinth) (player, target models.Coords
 	return
 }
 
-func createNewEnemy() {
-
-}
-
 // Create new Labyrinth by setting point and walls in empty map
 func CreateNewLabyrinth(emptyMap *models.Labyrinth) {
 	// Iterate in map using dimentions
