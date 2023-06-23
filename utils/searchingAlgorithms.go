@@ -2,7 +2,7 @@ package utils
 
 import (
 	"camuschino/laberth-go/models"
-	"sync"
+	"log"
 	"time"
 
 	"github.com/faiface/pixel/imdraw"
@@ -22,39 +22,33 @@ func ValidateMap(algorithm string, player models.Coords, target *models.Coords, 
 
 	switch algorithm {
 	case "DFS":
-		checkMapByBFS(player, target, laberth, imd, win)
-		// algh.numberOfRounds = algh.numberOfRounds + score
-		return 0
+		return 1
 	case "BFS":
+		return 0
 	default:
-		checkMapByBFS(player, target, laberth, imd, win)
+		log.Println("Starting DFS Go-rutines.", player, target)
+		go checkMapByBFS(player, target, laberth, imd, win)
+		<-laberth.Over
+		close(laberth.Over)
 	}
 	return
 }
 
 func checkMapByBFS(player models.Coords, target *models.Coords, laberth *models.Labyrinth, imd *imdraw.IMDraw, win *pixelgl.Window) {
-
-	mutex := &sync.Mutex{}
-	var slice []models.Coords
-	var laberthOver bool = false
-	time.Sleep(250 * time.Millisecond)
-
+	var DFScount = 0
 	for {
+		DFScount++
+		slice := make([]models.Coords, 0) 
 		getCoordsSlice(player, &slice, laberth)
 		if len(slice) == 0 {
+			player = GenerateValidMapPoint(laberth)
 			continue
 		}
-		go func() {
-			laberthOver = <-laberth.Over
-		}()
-		if !laberthOver {
-			go forBFS(slice, target, mutex, laberth, imd, win)
-		} else {
-			println("FINISHED!!!")
-			break
-		}
 
-		time.Sleep(2500 * time.Millisecond)
+		log.Println("Starting DFS Number: ", DFScount)
+		go forBFS(slice, target, laberth, imd, win)
+
+		time.Sleep(1000 * time.Millisecond)
 		player = GenerateValidMapPoint(laberth)
 	}
 }
@@ -84,11 +78,11 @@ func getCoordsSlice(player models.Coords, slice *[]models.Coords, laberth *model
 	}
 }
 
-func forBFS(slice []models.Coords, target *models.Coords, mutex *sync.Mutex, laberth *models.Labyrinth, imd *imdraw.IMDraw, win *pixelgl.Window) {
+func forBFS(slice []models.Coords, target *models.Coords, laberth *models.Labyrinth, imd *imdraw.IMDraw, win *pixelgl.Window) {
 
 	var first models.Coords
 
-	var score int
+	// var score int
 
 	first = slice[0]
 
@@ -102,26 +96,25 @@ func forBFS(slice []models.Coords, target *models.Coords, mutex *sync.Mutex, lab
 		laberth.ArrayToCheck[first.XPoint][first.YPoint] = true
 
 		if *target == first {
-			RenderingStep(first, laberth, colornames.Blue, mutex, imd, win)
-			time.Sleep(1000 * time.Millisecond)
+			log.Println("reach", first, target)
+			RenderingStep(first, laberth, colornames.Blue, imd, win)
 			laberth.Over <- true
+			break
 		}
 
-		switch mapPointable := laberth.ArrayToMap[first.XPoint][first.YPoint].(type) {
-		case models.MapPoint:
-			score = mapPointable.TargetInPoint.Collision(score)
-			println(score)
-		}
+		// switch mapPointable := laberth.ArrayToMap[first.XPoint][first.YPoint].(type) {
+		// case models.MapPoint:
+		// 	score = mapPointable.TargetInPoint.Collision(score)
+		// 	log.Println(score)
+		// }
 
 		// BFS searching velocity
-		time.Sleep(100 * time.Millisecond)
-
-		RenderingStep(first, laberth, colornames.Greenyellow, mutex, imd, win)
+		time.Sleep(10 * time.Millisecond)
+	
+		RenderingStep(first, laberth, colornames.Greenyellow, imd, win)
 
 		getCoordsSlice(first, &slice, laberth)
 	}
-
-	laberth.Over <- false
 }
 
 // func checkMapByDFS(player, target models.Coords, laberth *models.Labyrinth, imd *imdraw.IMDraw, win *pixelgl.Window, score int) models.MapBool {

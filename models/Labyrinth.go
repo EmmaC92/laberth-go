@@ -1,5 +1,7 @@
 package models
 
+import "sync"
+
 // Labyrinth struct
 type Labyrinth struct {
 	SizeField        int
@@ -7,6 +9,7 @@ type Labyrinth struct {
 	ArrayToCheck     [][]bool
 	ArrayToMap       [][]MapPointable
 	Over             chan bool
+	Mu               sync.Mutex
 }
 
 // SetArrays func
